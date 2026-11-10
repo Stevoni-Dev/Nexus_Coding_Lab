@@ -77,7 +77,7 @@ class CustomerLifecycleService:
             DomainEvent(
                 event_type="customer.deactivated",
                 customer_id=customer.customer_id,
-                payload={"email": customer.email, "reason": reason.strip()},
+                payload={"email": customer.email},
             )
         )
         return customer

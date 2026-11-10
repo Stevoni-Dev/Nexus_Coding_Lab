@@ -113,7 +113,7 @@ class CustomerService:
         self.repository.save(customer)
         self.notification_client.send(
             customer.email,
-            f"Your Atlas account has been deactivated: {reason.strip()}",
+            f"Your Atlas account has been deactivated.",
         )
         return True
 
