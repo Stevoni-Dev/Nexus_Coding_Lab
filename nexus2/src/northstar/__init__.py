@@ -3,6 +3,7 @@
 __all__ = [
     "api",
     "auth",
+    "audit",
     "customer_service",
     "errors",
     "events",

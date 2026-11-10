@@ -1,6 +1,8 @@
 import re
 import uuid
 
+from northstar.audit import log_action
+
 from .auth import Actor, AuthorizationService, LegacyRoleChecks
 from .errors import CustomerNotFoundError, ValidationError
 from .models import Customer, CustomerTier
@@ -111,6 +113,7 @@ class CustomerService:
 
         customer.active = False
         self.repository.save(customer)
+        log_action(actor.user_id, customer.customer_id, reason)
         self.notification_client.send(
             customer.email,
             f"Your Atlas account has been deactivated.",
