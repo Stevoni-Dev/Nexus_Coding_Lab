@@ -76,7 +76,7 @@ class CustomerLifecycleService:
 
         customer.active = False
         self._repository.save(customer)
-        self._audit.log_action(actor.user_id, customer.customer_id, reason)
+        self._audit.log_action(actor.user_id, customer.customer_id, reason.strip())
         self._events.publish(
             DomainEvent(
                 event_type="customer.deactivated",

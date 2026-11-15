@@ -114,7 +114,7 @@ class CustomerService:
 
         customer.active = False
         self.repository.save(customer)
-        self.audit.log_action(actor.user_id, customer.customer_id, reason)
+        self.audit.log_action(actor.user_id, customer.customer_id, reason.strip())
         self.notification_client.send(
             customer.email,
             f"Your Atlas account has been deactivated.",
