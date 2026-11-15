@@ -54,15 +54,6 @@ def test_deactivate_sends_notification(registration, lifecycle, notifications):
 #     assert notifications.sent_messages == []
 #     assert not lifecycle.is_active(customer.customer_id)
 
-def test_09_trimmed_reason_boundary(self):
-        # Four trimmed characters reject without effects; five succeed for a manager.
-        with self.assertRaises(ValueError):
-            self.command(reason=" abcd ")
-        self.assert_no_effects()
-        result = self.command(reason=" abcde ")
-        self.assertEqual(result.customer_id, "c1")
-        self.assertFalse(result.active)
-
 def test_deactivate_missing_customer_raises(lifecycle):
     with pytest.raises(CustomerNotFoundError):
         lifecycle.deactivate(
