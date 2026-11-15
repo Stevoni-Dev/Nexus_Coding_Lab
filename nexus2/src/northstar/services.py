@@ -57,12 +57,13 @@ class CustomerLifecycleService:
         self,
         repository: CustomerRepository,
         authorization: AuthorizationService,
+        audit: AuditEntry,
         events: EventBus,
     ) -> None:
         self._repository = repository
         self._authorization = authorization
         self._events = events
-        self._audit = AuditEntry()
+        self._audit = audit
 
     def deactivate(self, actor: Actor, customer_id: str, reason: str) -> Customer:
         self._authorization.require_customer_management(actor)
