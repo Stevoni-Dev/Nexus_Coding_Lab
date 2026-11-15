@@ -1,6 +1,7 @@
 import pytest
 
 from northstar.auth import AuthorizationService
+from northstar.audit import InMemoryAuditEntry
 from northstar.customer_service import CustomerService
 from northstar.events import EventBus
 from northstar.notifications import (
@@ -28,6 +29,11 @@ def notifications():
 
 
 @pytest.fixture
+def audit():
+    return InMemoryAuditEntry()
+
+
+@pytest.fixture
 def event_bus(notifications):
     bus = EventBus()
     bus.subscribe(CustomerNotificationSubscriber(notifications))
@@ -45,10 +51,10 @@ def registration(repository, auth, validation, event_bus):
 
 
 @pytest.fixture
-def lifecycle(repository, auth, event_bus):
-    return CustomerLifecycleService(repository, auth, event_bus)
+def lifecycle(repository, auth, audit, event_bus):
+    return CustomerLifecycleService(repository, auth, audit, event_bus)
 
 
 @pytest.fixture
-def legacy_service(repository, auth, notifications):
-    return CustomerService(repository, auth, notifications)
+def legacy_service(repository, auth, audit, notifications):
+    return CustomerService(repository, auth, audit, notifications)

@@ -1,6 +1,7 @@
 import uuid
 
 from .auth import Actor, AuthorizationService
+from .audit import AuditEntry
 from .events import DomainEvent, EventBus
 from .errors import CustomerNotFoundError
 from .models import Customer, CustomerTier
@@ -56,11 +57,13 @@ class CustomerLifecycleService:
         self,
         repository: CustomerRepository,
         authorization: AuthorizationService,
+        audit: AuditEntry,
         events: EventBus,
     ) -> None:
         self._repository = repository
         self._authorization = authorization
         self._events = events
+        self._audit = audit
 
     def deactivate(self, actor: Actor, customer_id: str, reason: str) -> Customer:
         self._authorization.require_customer_management(actor)
@@ -73,11 +76,12 @@ class CustomerLifecycleService:
 
         customer.active = False
         self._repository.save(customer)
+        self._audit.log_action(actor.user_id, customer.customer_id, reason.strip())
         self._events.publish(
             DomainEvent(
                 event_type="customer.deactivated",
                 customer_id=customer.customer_id,
-                payload={"email": customer.email, "reason": reason.strip()},
+                payload={"email": customer.email},
             )
         )
         return customer

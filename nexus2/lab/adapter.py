@@ -3,6 +3,7 @@ Do not manufacture audit records in this adapter: production code must write the
 """
 from types import SimpleNamespace
 from northstar.auth import AuthorizationService
+from northstar.audit import InMemoryAuditEntry
 from northstar.events import EventBus
 from northstar.models import Customer
 from northstar.notifications import NotificationClient, CustomerNotificationSubscriber
@@ -15,10 +16,11 @@ def build():
     repository.save(Customer("c1", "Case Customer", "case@example.com"))
     bus = EventBus()
     client = NotificationClient()
+    audit = InMemoryAuditEntry()
     bus.subscribe(CustomerNotificationSubscriber(client))
-    lifecycle = CustomerLifecycleService(repository, AuthorizationService(), bus)
+    lifecycle = CustomerLifecycleService(repository, AuthorizationService(), audit, bus)
     return SimpleNamespace(repository=repository, bus=bus, client=client,
-                           lifecycle=lifecycle, audit=[])
+                           lifecycle=lifecycle, audit=audit.audit_log)
 
 
 def audit_records(system):
